@@ -1,5 +1,4 @@
 from sqlalchemy import create_engine
-from crm.db.base import Base
 from sqlalchemy.orm import sessionmaker
 import os
 
