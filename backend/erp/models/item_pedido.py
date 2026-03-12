@@ -12,4 +12,4 @@ class ItemPedido(Base):
     preco_unitario: Mapped[float] = mapped_column(Float, nullable=False)
 
     pedido: Mapped["Pedido"] = relationship("Pedido", back_populates="itens")
-    produto: Mapped["Produto"] = relationship("Produto", back_populates="itens_pedidos")
+    produto: Mapped["Produto"] = relationship("Produto", back_populates="item_pedidos")

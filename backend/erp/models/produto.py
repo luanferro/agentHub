@@ -11,5 +11,5 @@ class Produto(Base):
     preco: Mapped[float] = mapped_column(Float, nullable=False)
     estoque: Mapped[int] = mapped_column(Integer, nullable=True)
 
-    item_produtos: Mapped[list["ItemPedido"]] = relationship(back_populates="produto")
+    item_pedidos: Mapped[list["ItemPedido"]] = relationship(back_populates="produto")
 
