@@ -5,16 +5,16 @@ class PedidoBase(BaseModel):
     data: datetime
     status: bool
     valor_total: float
-    client_name: str
+    client_nome: str
 
 class PedidoCreate(PedidoBase):
     pass
 
-class PedidoUpadte(PedidoBase):
+class PedidoUpdate(PedidoBase):
     data: str | None = None
     status: bool | None = None
     valor_total: float | None = None
-    client_name: str | None = None
+    client_nome: str | None = None
 
 class PedidoResponse(PedidoCreate):
     id: int
