@@ -10,3 +10,5 @@ class Cargo(Base):
     descricao: Mapped[str] = mapped_column(String(255), nullable=True)
     salario_base: Mapped[float] = mapped_column(Float, nullable=False)
     departamento_id: Mapped[int] = mapped_column(Integer, ForeignKey("departamentos.id"), nullable=True)
+
+    departamento: Mapped["Departamento"] = relationship("Departamento", back_populates="cargos")
