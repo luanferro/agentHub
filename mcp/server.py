@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-"""
-MCP Server Main File
-Executa o servidor MCP via stdio (padrão para Claude Desktop)
-"""
-
 import sys
 import os
 import logging

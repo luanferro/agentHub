@@ -1,9 +1,8 @@
 import httpx
-from mcp.server.fastmcp import FastMCP
+from server import mcp
 from config import ERP_API_URL
 from datetime import datetime
 
-mcp = FastMCP("AgentHub")
 
 @mcp.tool()
 async def listar_produtos() -> str:
