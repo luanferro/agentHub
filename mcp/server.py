@@ -1,10 +1,44 @@
-from mcp.server.fastmcp import FastMCP
+#!/usr/bin/env python3
+"""
+MCP Server Main File
+Executa o servidor MCP via stdio (padrão para Claude Desktop)
+"""
 
-mcp = FastMCP("AgentHub", host="0.0.0.0", port=8000)
+import sys
+import os
+import logging
 
-import tools.crm_tools
-import tools.erp_tools
-import tools.rh_tools
+# Configurar logging para stderr
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    stream=sys.stderr
+)
+
+logger = logging.getLogger(__name__)
+
+# Importar o servidor MCP da definição
+from server_http import mcp
 
 if __name__ == "__main__":
-    mcp.run(transport="sse")
+    logger.info("=" * 80)
+    logger.info("Iniciando MCP AgentHub Server")
+    logger.info(f"Python: {sys.executable}")
+    logger.info(f"Diretório: {os.getcwd()}")
+    logger.info(f"Argumentos: {sys.argv}")
+    logger.info("=" * 80)
+    
+    try:
+        logger.info("Executando MCP via stdio...")
+        logger.info("Aguardando conexão de um cliente MCP...")
+        mcp.run()
+        logger.info("MCP Server encerrou normalmente")
+    except KeyboardInterrupt:
+        logger.info("MCP Server interrompido pelo usuário")
+        sys.exit(0)
+    except EOFError:
+        logger.info("EOF recebido, encerrando")
+        sys.exit(0)
+    except Exception as e:
+        logger.error(f"Erro fatal: {e}", exc_info=True)
+        sys.exit(1)
