@@ -88,6 +88,26 @@ services:
       - redis_data:/data
     restart: unless-stopped
 
+
+
+  mcp:
+    build: ./mcp
+    container_name: mcp
+    ports:
+      - "8004:8000"
+    volumes:
+      - ./mcp:/app
+    environment:
+      ENV: development
+      CRM_API_URL: ${CRM_API_URL}
+      ERP_API_URL: ${ERP_API_URL}
+      RH_API_URL: ${RH_API_URL}
+    depends_on:
+      - crm-api
+      - erp-api
+      - rh-api
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   redis_data:
