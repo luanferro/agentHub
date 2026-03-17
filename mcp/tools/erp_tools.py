@@ -8,14 +8,14 @@ from datetime import datetime
 async def listar_produtos() -> str:
     """Lista todos os produtos cadastrados no ERP."""
     async with httpx.AsyncClient() as client:
-        response = await client.get(f"{ERP_API_URL}/api/v1/produto/")
+        response = await client.get(f"{ERP_API_URL}/erp/v1/produto/")
         return response.text
     
 @mcp.tool()
 async def buscar_produto(produto_id: str) -> str:
     """Lista um produto cadastrado no ERP a partir do ID do produto"""
     async with httpx.AsyncClient() as client:
-        response = await client.get(f"{ERP_API_URL}/api/v1/produto/{produto_id}")
+        response = await client.get(f"{ERP_API_URL}/erp/v1/produto/{produto_id}")
         return response.text
     
 @mcp.tool()
@@ -28,21 +28,21 @@ async def criar_produto(nome: str, descricao: str, preco: float, estoque: int) -
             "preco": preco,
             "estoque": estoque
         }
-        response = await client.post(f"{ERP_API_URL}/api/v1/produto/", json=payload)
+        response = await client.post(f"{ERP_API_URL}/erp/v1/produto/", json=payload)
         return response.text
 
 @mcp.tool()
 async def listar_pedidos() -> str:
     """Lista todos os pedidos cadastrados no ERP."""
     async with httpx.AsyncClient() as client:
-        response = await client.get(f"{ERP_API_URL}/api/v1/pedido/")
+        response = await client.get(f"{ERP_API_URL}/erp/v1/pedido/")
         return response.text
 
 @mcp.tool()
 async def buscar_pedido(pedido_id: str) -> str:
     """Lista um pedido cadastrado no ERP a partir do ID do pedido"""
     async with httpx.AsyncClient() as client:
-        response = await client.get(f"{ERP_API_URL}/api/v1/pedido/{pedido_id}")
+        response = await client.get(f"{ERP_API_URL}/erp/v1/pedido/{pedido_id}")
         return response.text
     
 @mcp.tool()
@@ -55,7 +55,7 @@ async def criar_pedido(data: datetime, status: bool, valor_total: float, client_
             "valor_total": valor_total,
             "client_nome": client_nome
         }
-        response = await client.post(f"{ERP_API_URL}/api/v1/pedido/", json=payload)
+        response = await client.post(f"{ERP_API_URL}/erp/v1/pedido/", json=payload)
         return response.text    
 
     
