@@ -1,0 +1,20 @@
+# Imagem base oficial Python 3.12 slim
+FROM python:3.12-slim
+
+# Diretório de trabalho dentro do container
+WORKDIR /app
+
+# Copiar arquivos de dependências primeiro (para aproveitar cache)
+COPY requirements.txt .
+
+# Instalar dependências
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar o restante do código
+COPY . ./gateway/
+
+# Expôr a porta que a API vai rodar
+EXPOSE 8000
+
+# Comando de execução
+CMD ["uvicorn", "gateway.main:app", "--host", "0.0.0.0", "--port", "8000"]

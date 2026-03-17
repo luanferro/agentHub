@@ -1,0 +1,126 @@
+# CI/CD Pipeline para agentHub - Tests
+# Executa testes em todos os serviços (CRM, ERP, RH) e gera coverage reports
+
+name: Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/crm/requirements.txt
+          pip install -r backend/erp/requirements.txt
+          pip install -r backend/rh/requirements.txt
+          pip install pytest pytest-asyncio pytest-cov
+      
+      - name: Run CRM tests
+        run: |
+          cd backend/crm
+          pytest tests/ -v --cov=. --cov-report=xml --cov-report=html --tb=short
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+          DB_HOST: localhost
+          DB_PORT: 5432
+      
+      - name: Run ERP tests
+        run: |
+          cd backend/erp
+          pytest tests/ -v --cov=. --cov-report=xml --cov-report=html --tb=short
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+          DB_HOST: localhost
+          DB_PORT: 5432
+      
+      - name: Run RH tests
+        run: |
+          cd backend/rh
+          pytest tests/ -v --cov=. --cov-report=xml --cov-report=html --tb=short
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+          DB_HOST: localhost
+          DB_PORT: 5432
+      
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        if: always()
+        with:
+          files: ./backend/crm/coverage.xml,./backend/erp/coverage.xml,./backend/rh/coverage.xml
+          fail_ci_if_error: false
+          verbose: true
+
+  lint:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+      
+      - name: Install linting tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 black isort
+      
+      - name: Check code formatting with Black
+        run: black --check backend/ --exclude=.venv,migrations
+        continue-on-error: true
+      
+      - name: Check import sorting with isort
+        run: isort --check-only backend/ --skip=.venv,migrations
+        continue-on-error: true
+      
+      - name: Lint with flake8
+        run: |
+          # Ignora linhas muito longas (E501) e algumas outras warnings
+          flake8 backend/ --count --select=E9,F63,F7,F82 --show-source --max-line-length=120 --exclude=.venv,migrations
+        continue-on-error: true
